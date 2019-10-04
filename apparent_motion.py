@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
-# -*- coding: utf-8 -*-
 import sys, os, pyglet
 from pyglet.gl import *
 
@@ -43,16 +39,3 @@ def on_draw():
 pyglet.clock.schedule_interval(on_move, 0.2)
 
 pyglet.app.run()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
