@@ -9,7 +9,7 @@ import numpy as np
 
 # Prefernce
 # ------------------------------------------------------------------------
-use_scr = 1
+use_scr = 0
 rept = 3
 data = pd.read_csv("eggs.csv")  # Load the condition file
 exclude_mousePointer = False
@@ -49,6 +49,7 @@ mdt = []
 dtstd = []
 exitance = True
 n = 0
+outer = 9000
 
 # Load sound resource
 ## Sounds
@@ -70,6 +71,9 @@ fixl = pyglet.sprite.Sprite(fixation, x=cntx - iso * deg1 - fixation.width / 2.0
 bg = pyglet.image.load("material/bg.png")
 bgr = pyglet.sprite.Sprite(bg, x=cntx + iso * deg1 - bg.width / 2.0, y=cnty - bg.height / 2.0, batch=fixer)
 bgl = pyglet.sprite.Sprite(bg, x=cntx - iso * deg1 - bg.width / 2.0, y=cnty - bg.height / 2.0, batch=fixer)
+
+msk = pyglet.image.load('material/mask.png')
+mask = pyglet.sprite.Sprite(msk, x=cntx - iso * deg1 - msk.width + 48, y=cnty - msk.height / 2.0)
 
 img = pyglet.image.load("material/WhiteCircle6x6.png")
 sprite_right = pyglet.sprite.Sprite(img, batch=batch, y=-200)
@@ -97,7 +101,7 @@ basedRds_left = based_left_x - rds0_sprite.width - displacement_x
 
 
 def setDefaults():
-    global displacement, dr, dl, pr, pl
+    global displacement, dr, dl, pr, pl, outer
     displacement = 30
     sprite_right.x = (based_right_x + eccentricity + displacement_x - dr) * pr  # 右目耳側右列
     sprite2_right.x = (based_right_x + eccentricity - displacement_x - dl) * pr  # 右目耳側左列
@@ -127,17 +131,18 @@ def update():
 
 
 def remove():
-    global displacement
+    global displacement, outer
     displacement = 3000
     update()
     fixl.update(y=3000)
     fixr.update(y=3000)
+    outer = 3000
 
 
 # A getting key response function
 class key_resp(object):
     def on_key_press(self, symbol, modifiers):
-        global tc, exitance, trial_start
+        global tc, exitance, trial_start, outer
         if exitance == False and symbol == key.DOWN:
             kd.append(time.time())
             tc = tc + 1
@@ -145,10 +150,10 @@ class key_resp(object):
             exitance = False
             p_sound.play()
             pyglet.clock.schedule_interval(on_move, 0.25)
-            pyglet.clock.schedule_interval(on_rds, 1/60)
             pyglet.clock.schedule_once(delete, 60.0)
             rds0_sprite.x = basedRds_left
             rds1_sprite.x = basedRds_left
+            outer = 0
             #            pyglet.clock.schedule_once(Get_results, 31.0)
             trial_start = time.time()
         if symbol == key.ESCAPE:
@@ -171,12 +176,13 @@ def on_move(dt):
     displacement = -1 * displacement
     update()
 
+outer = 1920
 clk = 0
 def on_rds(dt):
-    global clk
+    global clk, outer
     clk += (1/60)*0.25
-    rds_x1 = np.arcsin(np.sin(np.rad2deg(clk)))*20 + basedRds_left
-    rds_x2 = np.arcsin(-np.sin(np.rad2deg(clk)))*20 + basedRds_left
+    rds_x1 = np.arcsin(np.sin(np.rad2deg(clk)))*20 + basedRds_left + 25 + outer
+    rds_x2 = np.arcsin(-np.sin(np.rad2deg(clk)))*20 + basedRds_left + 25 + outer
     rds0_sprite.update(x=rds_x1)
     rds1_sprite.update(x=rds_x2)
     return rds0_sprite, rds1_sprite
@@ -262,12 +268,15 @@ def on_draw():
     # 描画対象のオブジェクトを描画する
     fixer.draw()
     rdss.draw()
+    mask.draw()
     batch.draw()
 
 
 # Store the start time
 start = time.time()
 win.push_handlers(resp_handler)
+pyglet.clock.schedule_interval(on_rds, 1/60)
+
 
 # ----------------- start loop -----------------------------
 # Get variables per trial from csv

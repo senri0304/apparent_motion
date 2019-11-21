@@ -9,8 +9,8 @@ to_dir = 'material'
 os.makedirs(to_dir, exist_ok=True)
 
 # Input RDS's size, caring be dividable
-height = 50
-width = 25
+height = 25
+width = 100
 
 # Input the disparity at pixel units.
 disparity = 0
@@ -25,19 +25,19 @@ s = 0
 lb = 120 # 215, 84%
 
 # Input luminance of dots
-ld = 60
+ld = 65
 
 # Generate RDSs
 for k in range(q):
 
     # Two images prepair
-    img = Image.new("L", (height, width), lb)
+    img = Image.new("L", (width, height), lb)
     draw = ImageDraw.Draw(img)
 
 
     # Draw the planes of RDSs
-    for i in range(0, width):
-        for j in range(1, height + 1):
+    for i in range(0, height):
+        for j in range(1, width + 1):
             x = np.round(np.random.binomial(1, 0.5, 1)) * (j)
             draw.point((x - 1, i), fill=(ld))
 
@@ -46,3 +46,12 @@ for k in range(q):
     # Write images
     basenameR = os.path.basename('rds' + str(k) + '.png')
     img_resize.save(os.path.join(to_dir, basenameR), quality=100)
+
+# Mask
+img = Image.new('LA', (300, height*4), 0)
+draw = ImageDraw.Draw(img)
+
+draw.rectangle((199, 0, 300, 100), fill=(lb, 255))
+draw.rectangle((0, 0, 100, 100), fill=(0, 255))
+
+img.save(os.path.join(to_dir, 'mask.png'))
