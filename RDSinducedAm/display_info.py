@@ -4,12 +4,9 @@
 import pyglet.canvas
 
 # Input display information
-inch = 23
+inch = 12
 aspect_width = 16
-aspect_height = 9
-
-variation = [+4, 0, -4, -8, 2000]
-
+aspect_height = 10
 
 # Get display information
 display = pyglet.canvas.get_display()
@@ -21,3 +18,11 @@ c = (aspect_width ** 2 + aspect_height ** 2) ** 0.5
 d_height = 2.54 * (aspect_height / c) * inch
 
 deg1 = round(resolution * (1 / d_height))
+
+am42 = round(resolution * (0.7 / d_height))
+
+
+variation = [resolution*(0.1/d_height), resolution*(0.3/d_height),
+             resolution*(0.5/d_height), resolution*(0.7/d_height)]*3
+#delay = [0, 0.1]
+#lag = [-1, 0, 0, 0, 0, 0]
