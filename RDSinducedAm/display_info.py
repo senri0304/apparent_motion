@@ -22,7 +22,6 @@ deg1 = round(resolution * (1 / d_height))
 am42 = round(resolution * (0.7 / d_height))
 
 
-variation = [resolution*(0.1/d_height), resolution*(0.3/d_height),
-             resolution*(0.5/d_height), resolution*(0.7/d_height)]*3
-#delay = [0, 0.1]
-#lag = [-1, 0, 0, 0, 0, 0]
+variation = [resolution*(0.01/d_height), resolution*(0.05/d_height),
+             resolution*(0.1/d_height), resolution*(0.7/d_height)]
+distance = [am42/2, am42/4]
